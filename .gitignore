@@ -16,3 +16,6 @@
 
 # jetbrains
 *. idea
+
+# vgo
+*.sum
