@@ -6,15 +6,18 @@ import (
 )
 
 type meetingRepository struct {
+	db *gorm.DB
 }
 
-func NewMeetingRepository() *meetingRepository {
-	return &meetingRepository{}
+func NewMeetingRepository(db *gorm.DB) *meetingRepository {
+	return &meetingRepository{
+		db: db,
+	}
 }
 
-func (r *meetingRepository) FindAll(db *gorm.DB) ([]*model.Meeting, error) {
+func (r *meetingRepository) FindAll() ([]*model.Meeting, error) {
 	var meetings []Meeting
-	db.Table("meeting").Select("id, title").Find(&meetings)
+	r.db.Table("meeting").Select("id, title").Find(&meetings)
 
 	modelMeetings := make([]*model.Meeting, len(meetings))
 	i := 0
@@ -26,9 +29,9 @@ func (r *meetingRepository) FindAll(db *gorm.DB) ([]*model.Meeting, error) {
 	return modelMeetings, nil
 }
 
-func (r *meetingRepository) FindByID(db *gorm.DB, id int) (*model.Meeting, error) {
+func (r *meetingRepository) FindByID(id int) (*model.Meeting, error) {
 	var meeting Meeting
-	db.Table("meeting").Select("id, title").Where("id = ?", id).Find(&meeting)
+	r.db.Table("meeting").Select("id, title").Where("id = ?", id).Find(&meeting)
 
 	modelMeeting := model.NewMeeting(meeting.ID, meeting.Title)
 

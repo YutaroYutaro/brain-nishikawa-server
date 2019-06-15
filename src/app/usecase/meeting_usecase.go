@@ -1,15 +1,14 @@
 package usecase
 
 import (
-	"github.com/jinzhu/gorm"
 	"src/app/domain/model"
 	"src/app/domain/repository"
 	"src/app/domain/service"
 )
 
 type MeetingUseCase interface {
-	ListMeeting(*gorm.DB) ([]*Meeting, error)
-	GetMeetingByID(*gorm.DB, int) (*Meeting, error)
+	ListMeeting() ([]*Meeting, error)
+	GetMeetingByID(int) (*Meeting, error)
 	//RegisterMeeting(title string) error
 }
 
@@ -25,8 +24,8 @@ func NewMeetingUseCase(repo repository.MeetingRepository, service *service.Meeti
 	}
 }
 
-func (m *meetingUseCase) ListMeeting(db *gorm.DB) ([]*Meeting, error) {
-	meetings, err := m.repo.FindAll(db)
+func (m *meetingUseCase) ListMeeting() ([]*Meeting, error) {
+	meetings, err := m.repo.FindAll()
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +33,8 @@ func (m *meetingUseCase) ListMeeting(db *gorm.DB) ([]*Meeting, error) {
 	return toMeeting(meetings), nil
 }
 
-func (m *meetingUseCase) GetMeetingByID(db *gorm.DB, id int) (*Meeting, error) {
-	meeting, err := m.repo.FindByID(db, id)
+func (m *meetingUseCase) GetMeetingByID(id int) (*Meeting, error) {
+	meeting, err := m.repo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}

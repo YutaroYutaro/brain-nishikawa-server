@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/sarulabs/di"
 	"src/app/domain/service"
 	"src/app/interface/database"
@@ -21,6 +22,9 @@ func NewContainer() (*Container, error) {
 		{
 			Name:  "meeting-usecase",
 			Build: buildMeetingUseCase,
+			Close: func(obj interface{}) error {
+				return obj.(*gorm.DB).Close()
+			},
 		},
 	}...); err != nil {
 		return nil, err
@@ -41,7 +45,11 @@ func (c *Container) Clean() error {
 }
 
 func buildMeetingUseCase(ctn di.Container) (interface{}, error) {
-	repo := database.NewMeetingRepository()
+	db, err := gorm.Open("mysql", "root:password@tcp(db-server:3306)/test_db")
+	if err != nil {
+		return nil, err
+	}
+	repo := database.NewMeetingRepository(db)
 	service := service.NewMeetingService(repo)
 
 	return usecase.NewMeetingUseCase(repo, service), nil
