@@ -15,7 +15,10 @@
 *.log
 
 # jetbrains
-*. idea
+*.idea
 
 # vgo
 *.sum
+
+#
+/src/tmp
